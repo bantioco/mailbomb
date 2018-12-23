@@ -1,0 +1,262 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700');
+@import url('https://fonts.googleapis.com/css?family=Dosis:300,400,700');
+
+.mailbomb-wrap{
+    /*font-family: "Dosis", "Roboto", sans-serif;*/
+    font-size: 14px;
+    color: #666;
+    font-weight: 300;
+}
+
+.nav-tab{
+    font-weight: 300;
+    font-size: 14px;
+}
+
+.nav-tab-active, 
+.nav-tab-active:focus, 
+.nav-tab-active:focus:active, 
+.nav-tab-active:hover
+{
+    font-weight: 300;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: #FFF;
+}
+
+.mailbomb-nav-content{
+    display: none;
+    padding: 10px;
+    position: relative;
+    /*margin-top: -1px;*/
+}
+
+.mailbomb-nav-content-active{
+    display: block;
+    background-color: #FFF;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+/*
+.mailbomb-code{
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    padding: 5px 0;
+}
+*/
+
+
+.mailbomb-flex{
+    display: flex;
+    width: 100%;
+    margin: 5px 0;
+}
+
+.mailbom-item-flex{
+   padding: 3px;
+}
+
+.mailbomb-field-add,
+.mailbomb-field-delete{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+    background-color: #666;
+    text-align: center;
+    color: #FFF;
+    font-size: 18px;
+    line-height: 1.3em;
+    cursor: pointer;
+}
+
+.mailbomb-field-delete{
+    background-color: #e74444;
+    display: none;
+}
+
+
+.mailbomb-field-sending{
+
+    width: 7px;
+    height: 7px;
+    background-color: #2cca39;
+    text-align: center;
+    color: #FFF;
+    font-size: 18px;
+    line-height: 1.3em;
+    display: none;
+    margin-top: 10px;
+}
+
+.rotate{
+
+    animation: rotate 1s infinite;
+    -webkit-animation: rotate 1s infinite;
+}
+
+@keyframes rotate{
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
+
+.mailbomb-test-ajax-result{
+
+    position: relative;
+    padding: 10px;
+    font-size: 13px;
+
+    .mailbomb-test-result-item{
+        display: flex;
+        justify-content: flex-start;
+        margin: 5px 0;
+
+        .mailbomb-ball-green{
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            -ms-border-radius: 50%;
+            -o-border-radius: 50%;
+            background-color: #2cca39;
+            text-align: center;
+            margin: 5px 10px;
+        }
+
+        .mailbomb-ball-red{
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            -ms-border-radius: 50%;
+            -o-border-radius: 50%;
+            background-color: #e74444;
+            text-align: center;
+            margin: 5px 10px;
+        }
+
+        .mailbomb-result-email{
+            padding: 0 10px;
+
+        }
+    }
+}
+
+
+
+.modal-bg,
+.modal{
+    display: none;
+}
+
+.modal-bg{
+    position: fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom: 0;
+    background-color: #000;
+    opacity: 0.7;
+    z-index: 10;
+}
+
+.modal{
+    position: absolute;
+    background-color: #FFF;
+    color: #666;
+    z-index: 20;
+    text-align: center;
+    padding: 20px;
+}
+
+.modal-small{
+    position: fixed;
+    top: 10%;
+    left: 40%;
+    right: 40%;
+}
+
+.btn-valid{
+
+    border: 1px dotted grey;
+    margin: 5px 10px;
+    cursor: pointer;
+}
+
+.btn-cancel{
+
+    border: 1px dotted grey;
+    margin: 5px 10px;
+    cursor: pointer;
+}
+
+
+
+table.mailbomb_users_table {
+    border-collapse: collapse;
+    font-size: 13px;
+}
+  
+table.mailbomb_users_table, th.mailbomb_users_th, td.mailbomb_users_td {
+    border: 1px solid black;
+}
+
+table.mailbomb_users_table {
+    width: 100%;
+}
+
+th.mailbomb_users_th {
+    height: 30px;
+    text-align: left;
+}
+
+th.mailbomb_users_th, td.mailbomb_users_td {
+    padding: 15px;
+    text-align: left;
+}
+
+//tr.mailbomb_users_tr:hover {background-color: #7ebfe4;}
+
+th.mailbomb_users_th {
+    background-color: #BABABA;
+    color: white;
+    font-size: 16px;
+}
+
+tr.mailbomb_users_tr:nth-child(even) {background-color: #f2f2f2;}
+
+.mailbomb_label_file{
+    position: relative;
+    padding: 20px;
+    text-align: center;
+    border: 1px dashed #BABABA;
+    display: block;
+    width: 50%;
+    margin: 10px 0;
+}
+#mailbomb_import_users{
+    display: none;
+    opacity: 0;
+}
+
+
+
+
+/*
+p{
+    font-size: 16px;
+    margin: 0 0;
+    line-height: 1em;
+}
+*/

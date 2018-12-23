@@ -1,0 +1,43 @@
+.mailbomb_form{
+    position: relative;
+    text-align: center;
+    margin: 10px;
+    padding: 10px;
+}
+
+.mailbomb_field{
+    position: relative;
+    text-align: center;
+    margin: 5px;
+}
+
+.mailbomb_send_notice{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left:0;
+    z-index: 999;
+    text-align: center;
+    display: none;
+}
+
+.mailbomb_send_notice_success{
+    position: relative;
+    background-color: #2cca39;
+    color: #FFF;
+    display: none;
+}
+
+.mailbomb_send_notice_warning{
+    position: relative;
+    background-color: #dd7411;
+    color: #FFF;
+    display: none;
+}
+
+.mailbomb_send_notice_error{
+    position: relative;
+    background-color: #e74444;
+    color: #FFF;
+    display: none;
+}
