@@ -18,9 +18,11 @@ class mailbombAdmin
     private static function initHooks() 
     {
         self::$initiated = true;
+
         add_action( 'admin_menu', [ 'mailbombAdmin', 'mailbomb_add_menu_page'] );
 
         add_action( 'show_user_profile', [ 'mailbombAdmin', 'mailbomb_profile_fields'] );
+
         add_action( 'edit_user_profile', [ 'mailbombAdmin', 'mailbomb_profile_fields'] );
 
         add_action( 'profile_update', [ 'mailbombAdmin', 'mailbomb_profile_fields_save' ], 10, 2 );
@@ -30,17 +32,45 @@ class mailbombAdmin
         add_filter( 'manage_users_columns', [ 'mailbombAdmin', 'mailbomb_modify_user_table' ] );
 
         add_filter( 'manage_users_custom_column', [ 'mailbombAdmin', 'mailbomb_modify_user_table_row' ], 10, 3 );
+
+        add_filter( 'admin_body_class', [ 'mailbombAdmin', 'mailbobm_table_classes' ], 10, 3 );
+    }    
+
+    public static function mailbobm_table_classes( $classes ) 
+    {
+        $screen = get_current_screen();
+
+        if( $screen &&  $screen->post_type )
+        {
+            $classes = $screen->post_type.'_class_edit';
+
+            if( $screen->id === "edit-mailbomb_templates" )
+            {
+                $classes .= ' '.$screen->post_type.'_class_table';
+            }
+
+            if( $screen->id === "mailbomb_templates" )
+            {
+                global $post;
+
+                if( $post && $post->post_name )
+                {
+                    $classes .= ' '.$post->post_name.'_class';
+                }
+            }
+        }
+        return $classes;
     }
 
-    public static function mailbomb_table_column( $contactmethods ) 
+    public static function mailbomb_table_column( $mailbombNewsletter ) 
     {
-        $contactmethods['mailbomb_newsletter'] = 'Mailbomb newsletter';
-        return $contactmethods;
+        $mailbombNewsletter['mailbomb_templates'] = 'Mailbomb newsletter';
+        return $mailbombNewsletter;
     }
     
     public static function mailbomb_modify_user_table( $column ) 
     {
-        $column['mailbomb_newsletter'] = 'Mailbomb newsletter';
+        $column['mailbomb_templates'] = 'Mailbomb newsletter';
         return $column;
     }
     
@@ -50,7 +80,7 @@ class mailbombAdmin
         $user = get_user_by( 'id', $user_id );
 
         switch ($column_name) {
-            case 'mailbomb_newsletter' :
+            case 'mailbomb_templates' :
                 $check   =  $wpdb->get_results( "SELECT email FROM {$wpdb->prefix}mailbomb_users WHERE email='$user->user_email'", OBJECT );
                 $val = "-";
                 if( $check ) $val = "OUI";
@@ -61,7 +91,6 @@ class mailbombAdmin
         return $val;
     }
     
-
     public static function mailbomb_add_menu_page()
     {
         add_menu_page( 
@@ -82,22 +111,54 @@ class mailbombAdmin
     {
         self::mailbomb_admin_html_save();
 
-        $isActive = self::mailbomb_active_check();
-
         global $wpdb;
 
-        $numberItems    = 10;
+        $userItemsPerPage   =  $wpdb->get_row( "SELECT id, value_params FROM {$wpdb->prefix}mailbomb_params WHERE key_params='users_list_items_per_page'", OBJECT );
+
+        $numberItems    = 5;
+        $limit 		    = 5;
+        $itemsPerPageId = 0;
         $offset 	    = 0;
-		$limit 		    = 10;
         $page 		    = 1;
         $numberPages    = 1;
+        
+
+        if( $userItemsPerPage ) 
+        {
+            $numberItems    = (int)$userItemsPerPage->value_params;
+            $limit 		    = (int)$userItemsPerPage->value_params;
+            $itemsPerPageId = $userItemsPerPage->id;
+        }
+
+        if( isset( $_GET['users-list'] ) && isset( $_GET['number-page'] ) )
+        {
+            $page = (int)$_GET['number-page'];
+
+            if( $page > 1 ) $offset = ( $page * $numberItems ) - $numberItems;
+        }
 
         $userListsAll   =  $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}mailbomb_users", OBJECT );
         $totalUsers     = count( $userListsAll );
 
         if( round( $totalUsers / $numberItems ) > 1 ) $numberPages = round( $totalUsers / $numberItems );
 
-		$userLists      =  $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}mailbomb_users ORDER BY id DESC LIMIT $offset,$limit;", OBJECT );
+        $userLists =  $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}mailbomb_users ORDER BY id DESC LIMIT $offset,$limit;", OBJECT );
+
+        /**
+         * TEMPLATE NEWSLETTER PARAMS
+         */
+        $defaultTemplateGet  =  $wpdb->get_row( "SELECT id, value_params FROM {$wpdb->prefix}mailbomb_params WHERE key_params='default_template_newsletter'", OBJECT );
+
+        $defaultTemplate            = "mailbomb-newsletter";
+        $defaultTemplateParamsId    = "";
+
+        if( $defaultTemplateGet ) 
+        {
+            $defaultTemplate            = $defaultTemplateGet->value_params;
+            $defaultTemplateParamsId    = $defaultTemplateGet->id;
+        }
+
+        $mailbombTemplates  =  $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}mailbomb_templates", OBJECT );
 
         require_once('html/setting.php');
     }
@@ -108,33 +169,85 @@ class mailbombAdmin
      */
     public static function mailbomb_admin_html_save()
     {
-        if( isset( $_POST['mailbomb_setting_post'] ) )
+        /**
+         * USERS LIST ITEMS PER PAGE
+         */
+        if( isset( $_POST['users_list_items_per_page'] ) && isset( $_POST['users_list_items_per_page_id'] ) )
         {
-            /**
-             * GLOBAL ACTIVATION
-             */
-            delete_option('_mailbomb_active');
+            $number = $_POST['users_list_items_per_page'];
+            $id     = $_POST['users_list_items_per_page_id'];
 
-            $isActive = "off";
+            self::users_list_items_per_page_update( $number, $id );
+        }
 
-            if( isset( $_POST['mailbomb_active'] ) ) $isActive = $_POST['mailbomb_active'];
+        /**
+         * TEMPLATE NEWSLETTER UPDATE
+         */
+        if( isset( $_POST['mailbomb_template_default'] ) && isset( $_POST['mailbomb_template_default_id'] ) )
+        {
+            $template_choice    = $_POST['mailbomb_template_default'];
+            $id                 = $_POST['mailbomb_template_default_id'];
 
-            if( $isActive === "on" ) add_option( '_mailbomb_active', 'on' );
+            self::mailbombTemplateDefaultUpdate( $template_choice, $id );
+        }
 
+
+        //@todo : a faire
+        if( isset( $_POST['mailbomb_users_list_delete'] ) && isset( $_POST['user_list_selected_delete'] ) )
+        {
+            $usersId = $_POST['user_list_selected_delete'];
+
+            foreach( $usersId as $userId )
+            {
+                $userId = (int)$userId;
+            }
+        }
+    }
+
+    public static function mailbombTemplateDefaultUpdate( $template_choice, $id )
+    {
+
+        if( $template_choice != "" && $template_choice != null )
+        {
+            $now        = new Datetime();
+            $dateNow    = $now->format('Y-m-d H:i:s');
+
+            $datas = [ 
+                'key_params'    => 'default_template_newsletter',
+                'value_params'  => $template_choice,
+                'created_at'    => $dateNow
+            ];
+
+            global $wpdb;
+
+            $table_name = $wpdb->prefix . 'mailbomb_params';
+
+            $wpdb->update( $table_name, $datas, [ 'id' => $id ], [ '%s', '%s', '%s' ], null );
         }
     }
 
     /**
-     * mailbomb - GLOBAL ACTIVE CHECK
+     *  UPDATE USERS LIST ITEMS PER PAGE
      */
-    public static function mailbomb_active_check()
+    public static function users_list_items_per_page_update( $number, $id )
     {
-        $getIsActive    = get_option('_mailbomb_active');
-        $isActive       = "";
+        if( ( (int)$number >= 1 ) && ( (int)$number <= 100 ) )
+        {
+            $now        = new Datetime();
+            $dateNow    = $now->format('Y-m-d H:i:s');
 
-        if( $getIsActive === "on" ) $isActive = 'checked="checked"';
+            $datas = [ 
+                'key_params'    => 'users_list_items_per_page',
+                'value_params'  => $number,
+                'created_at'    => $dateNow
+            ];
 
-        return $isActive;
+            global $wpdb;
+
+            $table_name = $wpdb->prefix . 'mailbomb_params';
+
+            $wpdb->update( $table_name, $datas, [ 'id' => $id ], [ '%s', '%s', '%s' ], null );
+        }
     }
 
     
@@ -196,7 +309,6 @@ class mailbombAdmin
                         {
                             $now        = new Datetime();
                             $dateNow    = $now->format('Y-m-d H:i:s');
-
                             $token      = bin2hex( random_bytes(128) );
 
                             $datas = [ 
@@ -206,7 +318,10 @@ class mailbombAdmin
                             ];
 
                             $wpdb->insert( $table_name, $datas, [ '%s', '%s', '%s' ] );
-                            $send 	= wp_mail( $email, 'Mailbomb register newsletter', 'Mailbomb register newsletter' );
+
+                            $body       = file_get_contents( get_site_url().'/?mailbomb_templates=mailbomb-user-register' );
+                            $headers    = array('Content-Type: text/html; charset=UTF-8');
+                            $send 	    = wp_mail( $email, 'Mailbomb register newsletter', $body, $headers );
                         }
                     }
                 }
@@ -220,7 +335,10 @@ class mailbombAdmin
                     $check = $check[0];
 
                     $wpdb->delete( "{$wpdb->prefix}mailbomb_users", ['id' => $check->id ] );
-                    $send 	= wp_mail( $email, 'Mailbomb unregister newsletter', 'Mailbomb unregister newsletter' );
+
+                    $body       = file_get_contents( get_site_url().'/?mailbomb_templates=mailbomb-user-unregistered' );
+                    $headers    = array('Content-Type: text/html; charset=UTF-8');
+                    $send 	    = wp_mail( $email, 'Mailbomb unregister newsletter', $body, $headers );
                 }
 
             }

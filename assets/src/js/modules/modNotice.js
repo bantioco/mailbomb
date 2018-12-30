@@ -11,21 +11,29 @@ let modNotice = {
             if( param === "exist"){
                 $('.mailbomb_send_notice').show();
                 $('.mailbomb_send_notice').find('.mailbomb_notice_exist').fadeIn(300);
+
+                setTimeout( function(){ $('.mailbomb_notice_exist').fadeOut(300, function(){ $('.mailbomb_send_notice').hide(); })}, 4000);
             }
 
             else if( param === "success"){
                 $('.mailbomb_send_notice').show();
                 $('.mailbomb_send_notice').find('.mailbomb_notice_success').fadeIn(300);
+
+                setTimeout( function(){ $('.mailbomb_notice_success').fadeOut(300, function(){ $('.mailbomb_send_notice').hide(); })}, 4000);
             }
 
             else if( param === "invalid_email"){
                 $('.mailbomb_send_notice').show();
                 $('.mailbomb_send_notice').find('.mailbomb_notice_invalid_email').fadeIn(300);
+
+                setTimeout( function(){ $('.mailbomb_notice_invalid_email').fadeOut(300, function(){ $('.mailbomb_send_notice').hide(); })}, 4000);
             }
 
             else if( param === "error"){
                 $('.mailbomb_send_notice').show();
                 $('.mailbomb_send_notice').find('.mailbomb_notice_error').fadeIn(300);
+
+                setTimeout( function(){ $('.mailbomb_send_notice_error').fadeOut(300, function(){ $('.mailbomb_send_notice').hide(); })}, 4000);
             }
         }
     },

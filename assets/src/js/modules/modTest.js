@@ -15,7 +15,9 @@ let modTest = {
 
         $d.off('click', '.mailbomb-field-add').on('click', '.mailbomb-field-add', function(){
 
-            modTest.AddTestField( $(this) );
+            let value = $(this).parent().parent().find('input[name="mailbomb_test_send[]"]').val();
+
+            if( value.length > 4 ) modTest.AddTestField( $(this) );
         });
 
         $d.off('click', '.mailbomb-field-delete').on('click', '.mailbomb-field-delete', function(){
@@ -41,6 +43,13 @@ let modTest = {
                 $('.modal').fadeOut(300, function(){ $('.modal-bg').fadeOut(300); });
 
                 modTest.TestGetEmail( function( ArrayEmails ){
+
+                    if( ArrayEmails.length <= 0 ){
+
+                        $('.mailbomb-field-sending').removeClass('rotate').hide();
+
+                        $('.mailbomb-test-ajax-result').html('Aucuns emails de test détectés ! Vérifiez les valeurs de vos champs !');
+                    }
 
                     console.log( ArrayEmails );
                 });
@@ -106,9 +115,9 @@ let modTest = {
         $.post(
             ajaxurl,
             {
-                action: 'mailbomb_test_send',
-                email: Email, 
-                index: Index
+                action: 'mailbombTestSend',
+                mailbomb_test_email: Email, 
+                mailbomb_test_index: Index
             },
             function( result ){
 

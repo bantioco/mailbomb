@@ -2,7 +2,11 @@ let modNav = {
 
     settingNav: ()=> {
 
+
+
         modNav.GetHash(); 
+
+        modNav.WrapShow();
 
         $d.off('click', '.mailbomb-nav').on('click', '.mailbomb-nav', function(){
 
@@ -10,6 +14,11 @@ let modNav = {
 
             modNav.Navigate( dataNav );
         });
+    },
+
+    WrapShow: ()=> {
+        
+        setTimeout(function(){ $('.mailbomb-wrap').addClass('mailbomb-wrap-visible'); }, 1000);
     },
 
     GetHash: ()=> {

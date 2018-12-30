@@ -30,6 +30,7 @@ class mailbombFront
             $email = filter_var( $_POST['_mailbomb_email'], FILTER_VALIDATE_EMAIL );
 
             global $wp;
+            
             $url = home_url( $wp->request );
             
             if( $email )
@@ -54,7 +55,12 @@ class mailbombFront
                     $table_name = $wpdb->prefix . 'mailbomb_users';
 
                     $wpdb->insert( $table_name, $datas, [ '%s', '%s', '%s' ] );
-                    $send 	= wp_mail( $email, 'Mailbomb register newsletter', 'Mailbomb register newsletter' );
+
+                    $body = file_get_contents( get_site_url().'/?mailbomb_templates=mailbomb-register' );
+
+                    $headers = array('Content-Type: text/html; charset=UTF-8');
+
+                    $send 	= wp_mail( $email, 'Mailbomb register newsletter', $body, $headers );
 
                     if( $send ) 
                     {

@@ -1,0 +1,69 @@
+table.mailbomb_users_table {
+    border-collapse: collapse;
+    font-size: 13px;
+}
+  
+table.mailbomb_users_table, th.mailbomb_users_th, td.mailbomb_users_td {
+    border: 1px solid #BABAAB;
+}
+
+table.mailbomb_users_table {
+    width: 100%;
+}
+
+th.mailbomb_users_th {
+    height: 30px;
+    text-align: left;
+}
+
+th.mailbomb_users_th, td.mailbomb_users_td {
+    padding: 15px;
+    text-align: left;
+}
+th.mailbomb_users_th_center,
+td.mailbomb_users_td_center{
+    text-align: center;
+}
+
+//tr.mailbomb_users_tr:hover {background-color: #7ebfe4;}
+
+th.mailbomb_users_th {
+    background-color: #504d4d;
+    color: white;
+    font-size: 16px;
+}
+
+tr.mailbomb_users_tr:nth-child(even) {background-color: #f2f2f2;}
+
+
+table.mailbomb_cron_table {
+    border-collapse: collapse;
+    font-size: 13px;
+}
+  
+table.mailbomb_cron_table, th.mailbomb_cron_th, td.mailbomb_cron_td {
+    border: 1px solid #BABABA;
+    text-align: left;
+}
+
+table.mailbomb_cron_table {
+    width: 100%;
+}
+
+th.mailbomb_cron_th {
+    height: 20px;
+    text-align: left;
+    background-color: #504d4d;
+    color: white;
+    font-size: 16px;
+}
+
+th.mailbomb_cron_th, td.mailbomb_cron_td {
+    padding: 5px;
+    text-align: left;
+}
+
+th.mailbomb_cron_th_center,
+td.mailbomb_cron_td_center{
+    text-align: center;
+}

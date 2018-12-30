@@ -1,0 +1,105 @@
+body.mailbomb-newsletter_class,
+body.mailbomb-register_class,
+body.mailbomb-unregistered_class,
+body.mailbomb-test_class
+{
+    #edit-slug-box,
+    #publishing-action,
+    .edit-post-status,
+    .edit-visibility,
+    .edit-timestamp,
+    .page-title-action
+    {
+        display: none;
+        visibility: hidden;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    input#title[value="Mailbomb newsletter"],
+    input#title[value="Mailbomb register"],
+    input#title[value="Mailbomb unregistered"],
+    input#title[value="Mailbomb test"]
+    {
+        pointer-events:none;
+    }
+
+    #mailbomb_template_upload_box{
+        display: none;
+        visibility: hidden;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    #post-preview{
+        content: "";
+        visibility: hidden;
+    }
+
+    #post-preview:before{
+        content: "Prévisualiser";
+        visibility: visible;
+        color: #555;
+        border-color: #ccc;
+        background: #f7f7f7;
+        box-shadow: 0 1px 0 #ccc;
+        vertical-align: top;
+        text-align: center;
+
+        display: inline-block;
+        text-decoration: none;
+        font-size: 13px;
+        line-height: 26px;
+        height: 28px;
+        margin: 0;
+        padding: 0 10px 1px;
+        cursor: pointer;
+        border-width: 1px;
+        border-style: solid;
+        -webkit-appearance: none;
+        border-radius: 3px;
+        white-space: nowrap;
+        box-sizing: border-box;
+        float: right;
+    }
+}
+
+#mailbomb_template_box{
+    display: none;
+}
+
+
+#mailbomb_template_view_box > .handlediv {
+
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+#mailbomb_template_view_box > .hndle {
+
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+body.mailbomb_templates_class_edit{
+
+    #wpbody-content{
+
+        font-family: "Dosis", "Roboto", sans-serif;
+
+        .page-title-action{
+            display: none;
+            visibility: hidden;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+    }
+}
