@@ -11,18 +11,15 @@ plugin complet de newsletter pour Wordpress, beta version
 ![alt text](github/9.png)
 ![alt text](github/17.png)
 ![alt text](github/16.png)
-![alt text](github/15.png)
 ![alt text](github/14.png)
 ![alt text](github/13.png)
 ![alt text](github/12.png)
 
 
-
-![alt text](github/8.png)
+![alt text](github/9.png)
 ![alt text](github/1.png)
 ![alt text](github/2.png)
 
 ![alt text](github/4.png)
-![alt text](github/5.png)
 ![alt text](github/5.png)
 
