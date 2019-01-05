@@ -1,0 +1,115 @@
+.mailbomb_large_span{
+    width: 40%;
+    display: inline-block;
+}
+
+.mailbomb_users_list_delete_btn{
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: flex-end;
+    padding: 5px 0;
+}
+
+.mailbomb_input_large{
+    width: 40%;
+}
+
+.mailbomb-btn{
+    border: 1px solid #0073aa;
+    background-color: #0073aa;
+    padding: 5px 20px;
+    text-align: center;
+    cursor: pointer;
+    color: #FFF;
+    transition: padding 0.3s, margin 0.3s;
+}
+
+.mailbomb-btn:hover{
+    -moz-box-shadow: 0px 0px 3px 0px #000000;
+    -webkit-box-shadow: 0px 0px 3px 0px #000000;
+    -o-box-shadow: 0px 0px 3px 0px #000000;
+    box-shadow: 0px 0px 3px 0px #000000;
+    filter:progid:DXImageTransform.Microsoft.Shadow(color=#000000, Direction=NaN, Strength=3);
+}
+
+
+.mailbomb-btn-grey{
+
+    border: 1px solid #BABABA;
+    background-color: #BABABA;
+    color: #666;
+    cursor: inherit;
+
+    -moz-box-shadow: 0px 0px 0px 0px #000000;
+    -webkit-box-shadow: 0px 0px 3px 0px #000000;
+    -o-box-shadow: 0px 0px 0px 0px #000000;
+    box-shadow: 0px 0px 0px 0px #000000;
+    filter:progid:DXImageTransform.Microsoft.Shadow(color=#000000, Direction=NaN, Strength=0);
+}
+
+.mailbomb-btn-grey:hover{
+
+    -moz-box-shadow: 0px 0px 0px 0px #000000;
+    -webkit-box-shadow: 0px 0px 0px 0px #000000;
+    -o-box-shadow: 0px 0px 0px 0px #000000;
+    box-shadow: 0px 0px 0px 0px #000000;
+    filter:progid:DXImageTransform.Microsoft.Shadow(color=#000000, Direction=NaN, Strength=0);
+}
+
+
+.mailbomb-btn-red{
+    border: 1px solid #e74444;
+    background-color: #e74444;
+    color: #FFF;
+}
+
+.mailbomb-btn[disabled]{
+    border: 1px solid #BABABA;
+    background-color: #BABABA;
+    color: #666;
+    cursor: inherit;
+
+    -moz-box-shadow: 0px 0px 0px 0px #000000;
+    -webkit-box-shadow: 0px 0px 3px 0px #000000;
+    -o-box-shadow: 0px 0px 0px 0px #000000;
+    box-shadow: 0px 0px 0px 0px #000000;
+    filter:progid:DXImageTransform.Microsoft.Shadow(color=#000000, Direction=NaN, Strength=0);
+}
+
+label[for="mailbomb_import_file_template"]{
+
+    display: block;
+    padding: 10px;
+
+    border: 1px dashed #BABABA;
+
+}
+#mailbomb_import_file_template{
+    display: none;
+}
+
+label[for="mailbomb_import_img_template"]{
+
+    display: block;
+    padding: 10px;
+
+    border: 1px dashed #BABABA;
+
+}
+#mailbomb_import_img_template{
+    display: none;
+}
+
+
+label[for="mailbomb_add_img_template"]{
+
+    display: block;
+    padding: 10px;
+
+    border: 1px dashed #BABABA;
+
+}
+#mailbomb_add_img_template{
+    display: none;
+}

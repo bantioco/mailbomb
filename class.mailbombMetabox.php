@@ -44,9 +44,10 @@ class mailbombMetabox
         
         global $post;
 
-        $view = file_get_contents( home_url().'/?mailbomb_templates='.$post->post_name );
+        $view       = file_get_contents( home_url().'/?mailbomb_templates='.$post->post_name );
+        $loader     = '<div style="display:none;" id="mailbomb_template_loader" class="mailbomb_template_loader">Chargement...</div>';
 
-        if( $view ) echo $view;
+        if( $view ) echo $view.$loader;
     }
 
     /*

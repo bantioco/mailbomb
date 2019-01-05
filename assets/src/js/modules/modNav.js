@@ -2,8 +2,6 @@ let modNav = {
 
     settingNav: ()=> {
 
-
-
         modNav.GetHash(); 
 
         modNav.WrapShow();
@@ -41,6 +39,9 @@ let modNav = {
             hash = hash.replace('#', '');
 
             modNav.Navigate( hash );
+        }
+        else{
+            modNav.Navigate( 'mailbomb-dashboard' );
         }
     },
 

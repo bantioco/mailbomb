@@ -13,6 +13,9 @@ jQuery(document).ready(function($) {
 
     if( $('#mailbomb_setting').is(':visible') ){
 
+        let modDashboard = require('./modules/modDashboard.js');
+        modDashboard.NewsletterSubmit();
+
         let modModal = require('./modules/modModal.js');
         modModal.Init();
 
@@ -27,6 +30,10 @@ jQuery(document).ready(function($) {
 
         let modUserlist = require('./modules/modUserlist.js');
         modUserlist.Init();
+
+        let modExport = require('./modules/modExport.js');
+        modExport.Flatpickr( '#export_date_start' );
+        modExport.Flatpickr( '#export_date_end' );
     }
 
     if( $('#mailbomb_template_view_box').is(':visible') ){

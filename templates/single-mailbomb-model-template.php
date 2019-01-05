@@ -190,7 +190,7 @@
                                                                                                         <td valign="top" align="center" class="specbundle"><div class="contentEditableContainer contentTextEditable">
                                                                                                             <div class="contentEditable">
                                                                                                                 <p style='text-align:center;margin:0;font-family: "Dosis", sans-serif !important;font-size:42px;color:#222222;'>
-                                                                                                                    <span class="specbundle2"><span class="font1"><?php echo ucfirst( str_replace( '-', ' ', $template_name ) );?></span>
+                                                                                                                    <span class="specbundle2"><span class="font1"><?php echo ucfirst( str_replace( '-', ' ', $templateName ) );?></span>
                                                                                                                 </p>
                                                                                                             </div>
                                                                                                         </td>
@@ -221,7 +221,7 @@
                                                                                             <div class="contentEditable" align='center'>
 
                                                                                                 <p style='text-align:center;margin:0;font-family: "Dosis", sans-serif !important;'>
-                                                                                                    <?php echo $template_content;?> - <?php echo get_site_url();?>
+                                                                                                    <?php echo $templateContent;?> - <?php echo get_site_url();?>
                                                                                                     <br>
                                                                                                     <br>
     

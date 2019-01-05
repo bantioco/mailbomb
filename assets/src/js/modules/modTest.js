@@ -15,9 +15,22 @@ let modTest = {
 
         $d.off('click', '.mailbomb-field-add').on('click', '.mailbomb-field-add', function(){
 
-            let value = $(this).parent().parent().find('input[name="mailbomb_test_send[]"]').val();
+            let $this = $(this);
 
-            if( value.length > 4 ) modTest.AddTestField( $(this) );
+            let value = $this.parent().parent().find('input[name="mailbomb_test_send[]"]').val();
+
+            if( value.length > 4 ) {
+
+                modTest.AddTestField( $this );
+            }
+            else {
+
+                $this.parent().parent().find('input[name="mailbomb_test_send[]"]').val('Email invalide !');
+
+                setTimeout( function(){ 
+                    $this.parent().parent().find('input[name="mailbomb_test_send[]"]').val('');
+                },1500);
+            }
         });
 
         $d.off('click', '.mailbomb-field-delete').on('click', '.mailbomb-field-delete', function(){
@@ -62,6 +75,8 @@ let modTest = {
 
         let ArrayEmails = [];
 
+        let Template    = $('#mailbomb_template_test').val();
+
         $('input[name="mailbomb_test_send[]"]').each( function( key, item ){
 
             let Email = $(item).val();
@@ -71,7 +86,7 @@ let modTest = {
 
                 ArrayEmails[key] = Email;
 
-                modTest.TestAjaxPost( Email, Index, function( result ){
+                modTest.TestAjaxPost( Email, Index, Template, function( result ){
 
                     if( result.success ) modTest.SendSuccess( result );
                 });
@@ -110,21 +125,21 @@ let modTest = {
         modTest.TestFieldAddIndex();
     },
 
-    TestAjaxPost: ( Email, Index, callback )=> {
+    TestAjaxPost: ( Email, Index, Template, callback )=> {
 
         $.post(
             ajaxurl,
             {
                 action: 'mailbombTestSend',
                 mailbomb_test_email: Email, 
-                mailbomb_test_index: Index
+                mailbomb_test_index: Index,
+                mailbom_test_template: Template
             },
             function( result ){
 
                 return callback( result );
             }
         );
-
     }
 }
 module.exports = modTest;

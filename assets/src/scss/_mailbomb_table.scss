@@ -1,3 +1,28 @@
+.mailbomb_user_list_table_container{
+    position: relative;
+    overflow: hidden;
+}
+
+.mailbomb_user_list_loader{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    background-color: #FFF;
+    color: #666666;
+    border: 1px solid #BABABA;
+    text-align: center;
+    padding-top: 20%;
+    display: none;
+}
+
+.mailbomb_animation_show_hide{
+    animation: show_hide linear infinite 1s;
+    -webkit-animation: show_hide linear infinite 1s;
+}
+
 table.mailbomb_users_table {
     border-collapse: collapse;
     font-size: 13px;
@@ -66,4 +91,15 @@ th.mailbomb_cron_th, td.mailbomb_cron_td {
 th.mailbomb_cron_th_center,
 td.mailbomb_cron_td_center{
     text-align: center;
+}
+
+tr.mailbomb_cron_tr:nth-child(even) {background-color: #f2f2f2;}
+
+tr.mailbomb_cron_tr:hover{
+    td,th{
+        border-bottom: 1px solid #f8af48;
+        background-color: #ffedd2;
+        color: #f79f24;
+        transition: border-bottom .5s, background-color .5s, color .5s;
+    }
 }

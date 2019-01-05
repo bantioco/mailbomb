@@ -306,11 +306,11 @@ class mailbombTemplate
         {
             global $wpdb;
 
-            $template_name      = strtolower( filter_var( $_POST['mailbomb_add_name_template'], FILTER_SANITIZE_STRING ) );
-            $template_slug      = str_replace(' ', '-', $template_name );
-            $template_content   = $_POST['mailbomb_add_html_template'];
-            $table_name         = $wpdb->prefix . 'mailbomb_templates';
-            $check              = $wpdb->get_row( "SELECT * FROM $table_name WHERE template_name='$template_name'", OBJECT );
+            $templateName       = strtolower( filter_var( $_POST['mailbomb_add_name_template'], FILTER_SANITIZE_STRING ) );
+            $templateSlug       = str_replace(' ', '-', $templateName );
+            $templateContent    = $_POST['mailbomb_add_html_template'];
+            $tableName          = $wpdb->prefix . 'mailbomb_templates';
+            $check              = $wpdb->get_row( "SELECT * FROM $tableName WHERE template_name='$templateName'", OBJECT );
             $now  		        = new Datetime();
 
 			if( !$check )
@@ -318,18 +318,17 @@ class mailbombTemplate
                 $dateNow    = $now->format('Y-m-d H:i:s');
 
 				$dataValues = [ 
-					'template_name' => $template_slug,
-					'template_value' => $template_content,
-					'is_active' => '1',
-					'created_at' => $dateNow
+					'template_name'     => $templateSlug,
+					'template_value'    => $templateContent,
+					'is_active'         => '1',
+					'created_at'        => $dateNow
 				];
 
-                $wpdb->insert( $table_name, $dataValues, [ '%s', '%s', '%s', '%s' ] );
+                $wpdb->insert( $tableName, $dataValues, [ '%s', '%s', '%s', '%s' ] );
                 
                 $post_id    = -1;
                 $author_id  = 1;
-                $slug       = $template_slug;
-                $title      = ucfirst( $template_name );
+                $title      = ucfirst( $templateName );
 
                 $post = get_page_by_title( $title, OBJECT, 'mailbomb_templates' );
 
@@ -337,97 +336,98 @@ class mailbombTemplate
                 {
                     if( null == get_page_by_title( $title ) ) 
                     {
-                        $post_id = wp_insert_post(
-                            [
-                                'comment_status'	=>	'closed',
-                                'ping_status'		=>	'closed',
-                                'post_author'		=>	$author_id,
-                                'post_name'			=>	$slug,
-                                'post_title'		=>	$title,
-                                'post_status'		=>	'publish',
-                                'post_type'			=>	'mailbomb_templates',
-                                'post_content'      => $template_content
-                            ]
-                        );
+                        $post_id = wp_insert_post([
+                            'comment_status'	=> 'closed',
+                            'ping_status'		=> 'closed',
+                            'post_author'		=> $author_id,
+                            'post_name'			=> $templateSlug,
+                            'post_title'		=> $title,
+                            'post_status'		=> 'publish',
+                            'post_type'			=> 'mailbomb_templates',
+                            'post_content'      => $templateContent
+                        ]);
 
-                        if( $_FILES )
+                        if( $_FILES ) self::mailbombTemplateFile( $_FILES, $post_id );
+                    }
+                }
+			}
+        }
+    }
+
+    public static function mailbombTemplateFile( $FILES, $post_id )
+    {
+        $now  		= new Datetime();
+
+        $dirYear    = $now->format('Y');
+        $dirMonth   = $now->format('m');
+        $basedir    = get_home_path().'wp-content/uploads/';
+
+        if( !is_dir( $basedir.$dirYear )) mkdir( $basedir.$dirYear.'/' );
+
+        if( !is_dir( $basedir.$dirYear.'/'.$dirMonth )) mkdir( $basedir.$dirYear.'/'.$dirMonth.'/' );
+
+        $uploaddir  = $basedir.$dirYear.'/'.$dirMonth.'/';
+        $uploadfile = $uploaddir . basename( $FILES['mailbomb_add_img_template']['name'] );
+
+        if( move_uploaded_file( $FILES['mailbomb_add_img_template']['tmp_name'], $uploadfile ) ) 
+        {
+            $zip = new ZipArchive;
+
+            if ( $zip->open( $uploadfile ) === TRUE) 
+            {
+                for( $i=0; $i < $zip->numFiles; $i++ ) 
+                {
+                    $name = $zip->statIndex($i)['name'];
+
+                    if ( strpos( $name, '__MACOSX' ) === false ) $zip->extractTo( $uploaddir, $name );
+                }
+
+                $zip->close();
+
+                unlink( $uploadfile );
+
+                $scans = scandir( $uploaddir );
+
+                if( $scans )
+                {
+                    foreach( $scans as $item )
+                    {
+                        if( $item != '.' && $item != '..' && $item != '.DS_Store' )
                         {
-                            $dirYear    = $now->format('Y');
-                            $dirMonth   = $now->format('m');
-                            $basedir    = get_home_path().'wp-content/uploads/';
-
-                            if( !is_dir( $basedir.$dirYear )) mkdir( $basedir.$dirYear.'/' );
-
-                            if( !is_dir( $basedir.$dirYear.'/'.$dirMonth )) mkdir( $basedir.$dirYear.'/'.$dirMonth.'/' );
-
-                            $uploaddir  = $basedir.$dirYear.'/'.$dirMonth.'/';
-                            $uploadfile = $uploaddir . basename( $_FILES['mailbomb_add_img_template']['name'] );
-
-                            if( move_uploaded_file( $_FILES['mailbomb_add_img_template']['tmp_name'], $uploadfile ) ) 
+                            if( is_dir( $uploaddir.$item ) )
                             {
-                                $zip = new ZipArchive;
+                                $scandir = scandir( $uploaddir.$item );
 
-                                if ( $zip->open( $uploadfile ) === TRUE) 
+                                foreach( $scandir as $key => $file )
                                 {
-
-                                    for( $i=0; $i < $zip->numFiles; $i++ ) 
+                                    if( $file != '.' && $file != '..' && !is_dir( $file ) )
                                     {
-                                        $name = $zip->statIndex($i)['name'];
+                                        $fileinfo = pathinfo( $uploaddir.$file );
 
-                                        if ( strpos( $name, '__MACOSX' ) === false ) $zip->extractTo( $uploaddir, $name );
-                                    }
+                                        $uploadfilename           = $fileinfo['filename'];
 
-                                    $zip->close();
+                                        $original_filename  = $file;
+                                        $rename_file        = $key.'_'.$now->format('YmdHis').'.'.$fileinfo['extension'];
 
-                                    unlink( $uploadfile );
-
-                                    $scans = scandir( $uploaddir );
-
-                                    if( $scans )
-                                    {
-                                        foreach( $scans as $item )
+                                        if ( copy( $uploaddir.$item.'/'.$original_filename, $uploaddir.$rename_file ) ) 
                                         {
-                                            if( $item != '.' && $item != '..' && $item != '.DS_Store' )
-                                            {
-                                                if( is_dir( $uploaddir.$item ) )
-                                                {
-                                                    $scandir = scandir( $uploaddir.$item );
-
-                                                    foreach( $scandir as $key => $file )
-                                                    {
-                                                        if( $file != '.' && $file != '..' && !is_dir( $file ) )
-                                                        {
-                                                            $fileinfo = pathinfo( $uploaddir.$file );
-
-                                                            $uploadfilename           = $fileinfo['filename'];
-
-                                                            $original_filename  = $file;
-                                                            $rename_file        = $key.'_'.$now->format('YmdHis').'.'.$fileinfo['extension'];
-
-                                                            if ( copy( $uploaddir.$item.'/'.$original_filename, $uploaddir.$rename_file ) ) 
-                                                            {
-                                                                $oldfiles[] = $uploaddir.$item.'/'.$original_filename;
-                                                            }
-
-                                                            self::mailbombAddWpMediaTemplate( $post_id, $uploaddir, $dirYear, $dirMonth, $uploadfilename, $original_filename, $rename_file );
-                                                        }
-                                                    }
-
-                                                    if( $oldfiles ) foreach ( $oldfiles as $oldfile ) unlink( $oldfile );
-                                                    
-                                                    rmdir( $uploaddir.$item );
-
-                                                    //unlink( $uploaddir.'.DS_Store'  );
-                                                }
-                                            }
+                                            $oldfiles[] = $uploaddir.$item.'/'.$original_filename;
                                         }
+
+                                        self::mailbombAddWpMediaTemplate( $post_id, $uploaddir, $dirYear, $dirMonth, $uploadfilename, $original_filename, $rename_file );
                                     }
                                 }
+
+                                if( $oldfiles ) foreach ( $oldfiles as $oldfile ) unlink( $oldfile );
+                                
+                                rmdir( $uploaddir.$item );
+
+                                if( file_exists ( $uploaddir.'.DS_Store' ) ) unlink( $uploaddir.'.DS_Store'  );
                             }
                         }
                     }
                 }
-			}
+            }
         }
     }
 

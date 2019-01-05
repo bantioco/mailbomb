@@ -68,6 +68,8 @@ class mailbombInit
 		wp_enqueue_script( 'script-mailbombCodemirrorCss', plugin_dir_url( __FILE__ ).'assets/src/plugins/codemirror/mode/css/css.js', [], '1.0.0', true );
 		wp_enqueue_script( 'script-mailbombCodemirrorJs', plugin_dir_url( __FILE__ ).'assets/src/plugins/codemirror/mode/javascript/javascript.js', [], '1.0.0', true );
 		wp_enqueue_script( 'script-mailbombCodemirrorHtml', plugin_dir_url( __FILE__ ).'assets/src/plugins/codemirror/mode/htmlmixed/htmlmixed.js', [], '1.0.0', true );
+
+		wp_enqueue_style( 'style-mailbombFlatpickr', plugin_dir_url( __FILE__ ).'assets/src/plugins/flatpickr/flatpickr.min.css', 20 );
 	}
 
 
@@ -81,13 +83,14 @@ class mailbombInit
 		/**
 		 * MAILBOMB USERS
 		 */
-		$table_name = $wpdb->prefix . 'mailbomb_users';
+		$tableUsers = $wpdb->prefix . 'mailbomb_users';
 	
-		$sql = "CREATE TABLE $table_name (
+		$sql = "CREATE TABLE $tableUsers (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			email varchar(255) NOT NULL,
 			token text NOT NULL,
-			newsletter_sending int(11) NULL default '0',
+			newsletter_sending int(11) DEFAULT '0' NULL,
+			last_newsletter_sending varchar(255) DEFAULT '0000-00-00 00:00:00' NULL,
 			created_at varchar(255) NOT NULL,
 			UNIQUE KEY id (id)
 		) $charset_collate;";
@@ -97,9 +100,9 @@ class mailbombInit
 		/**
 		 *  MAILBOMB PARAMS
 		 */
-		$table_name = $wpdb->prefix . 'mailbomb_params';
+		$tableParams = $wpdb->prefix . 'mailbomb_params';
 	
-		$sql = "CREATE TABLE $table_name (
+		$sql = "CREATE TABLE $tableParams (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			key_params varchar(255) NOT NULL,
 			value_params text NOT NULL,
@@ -112,11 +115,11 @@ class mailbombInit
 		self::mailbombAddParams();
 
 		/**
-		 *  MAILBOMB PARAMS
+		 *  MAILBOMB TEMPLATES
 		 */
-		$table_name = $wpdb->prefix . 'mailbomb_templates';
+		$tableTemplates = $wpdb->prefix . 'mailbomb_templates';
 	
-		$sql = "CREATE TABLE $table_name (
+		$sql = "CREATE TABLE $tableTemplates (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			template_name varchar(255) NOT NULL,
 			template_value text NOT NULL,
@@ -133,9 +136,9 @@ class mailbombInit
 		/**
 		 *  MAILBOMB MEDIA
 		 */
-		$table_name = $wpdb->prefix . 'mailbomb_template_media';
+		$tableMedias = $wpdb->prefix . 'mailbomb_template_media';
 	
-		$sql = "CREATE TABLE $table_name (
+		$sql = "CREATE TABLE $tableMedias (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			media_id varchar(255) NOT NULL,
 			media_name varchar(255) NOT NULL,
@@ -148,20 +151,52 @@ class mailbombInit
 		) $charset_collate;";
 	
 		dbDelta( $sql );
+
+
+		/**
+		 *  MAILBOMB STATISTIQUES
+		 */
+		$tableStats = $wpdb->prefix . 'mailbomb_stats';
+	
+		$sql = "CREATE TABLE $tableStats (
+			id mediumint(9) NOT NULL AUTO_INCREMENT,
+			key_stats varchar(255) NOT NULL,
+			value_stats text NOT NULL,
+			state_stats varchar(255) NULL,
+			created_at varchar(255) NOT NULL,
+			UNIQUE KEY id (id)
+		) $charset_collate;";
+	
+		dbDelta( $sql );
 	}
 
+	/**
+	 * MAILBOMB - Add default params
+	 */
 	public static function mailbombAddParams()
 	{
 		global $wpdb;
 
 		$now        = new Datetime();
-		$dateNow    = $now->format('Y-m-d H:i:s');
-		
-		$table_name = $wpdb->prefix . 'mailbomb_params';
+		$tableName 	= $wpdb->prefix . 'mailbomb_params';
 
-		$users_list_items_per_page   =  $wpdb->get_row( "SELECT value_params FROM {$wpdb->prefix}mailbomb_params WHERE key_params='users_list_items_per_page'", OBJECT );
+		self::mailbombAddParamItemPerPage( $wpdb, $now, $tableName );
 
-		if( !$users_list_items_per_page )
+		self::mailbombAddParamDefaultTemplate( $wpdb, $now, $tableName );
+
+		return;
+	}
+
+	/**
+	 * MAILBOMB - Add param default item per page
+	 */
+	public static function mailbombAddParamItemPerPage( $wpdb, $now, $tableName )
+	{
+		$dateNow    	= $now->format('Y-m-d H:i:s');
+
+		$itemsPerPage   =  $wpdb->get_row( "SELECT value_params FROM $tableName WHERE key_params='users_list_items_per_page'", OBJECT );
+
+		if( !$itemsPerPage )
 		{
 			$datas = [ 
 				'key_params' => 'users_list_items_per_page',
@@ -169,34 +204,60 @@ class mailbombInit
 				'created_at' => $dateNow
 			];
 
-			$wpdb->insert( $table_name, $datas, [ '%s', '%s', '%s' ] );
+			$wpdb->insert( $tableName, $datas, [ '%s', '%s', '%s' ] );
 		}
+		return;
+	}
 
-
-		$default_template_newsletter   =  $wpdb->get_row( "SELECT value_params FROM {$wpdb->prefix}mailbomb_params WHERE key_params='default_template_newsletter'", OBJECT );
-
-		if( !$default_template_newsletter )
-		{
-			$datas = [ 
+	/**
+	 * MAILBOMB - Default array templates
+	 */
+	public static function mailbombArrayTemplates( $dateNow )
+	{
+		$datas = [ 
+			0 =>[
 				'key_params' => 'default_template_newsletter',
 				'value_params' => 'mailbomb-newsletter',
 				'created_at' => $dateNow
-			];
-
-			$wpdb->insert( $table_name, $datas, [ '%s', '%s', '%s' ] );
-		}
+			],
+			1 => [
+				'key_params' => 'default_template_register',
+				'value_params' => 'mailbomb-register',
+				'created_at' => $dateNow
+			],
+			2 => [
+				'key_params' => 'default_template_unregistered',
+				'value_params' => 'mailbomb-unregistered',
+				'created_at' => $dateNow
+			]
+		];
+		return $datas;
 	}
 
-
-	public static function mailbombAddTemplates()
+	/**
+	 * MAILBOMB - Add param default templates
+	 */
+	public static function mailbombAddParamDefaultTemplate( $wpdb, $now, $tableName )
 	{
-		$content = "";
+		$dateNow 				= $now->format('Y-m-d H:i:s');
 
-		global $wpdb;
+		$datas = self::mailbombArrayTemplates( $dateNow );
 
-		$now  		= new Datetime();		
-		$table_name = $wpdb->prefix . 'mailbomb_templates';
+		foreach( $datas as $data ) 
+		{
+			$keyParam 	= $data['key_params'];
+			$checkParam =  $wpdb->get_row( "SELECT id FROM $tableName WHERE key_params='$keyParam'", OBJECT );
 
+			if( !$checkParam ) $wpdb->insert( $tableName, $data, [ '%s', '%s', '%s' ] );
+		}
+		return;
+	}
+
+	/**
+	 * MAILBOMB - Default array templates content
+	 */
+	public static function mailbombArrayTemplatesContent()
+	{
 		$templates = [
 			0 => [
 				'name' 		=> 'mailbomb-test',
@@ -215,38 +276,67 @@ class mailbombInit
 				'content' 	=> 'Vous êtes désormais désinscrit de la newsletter - Mailbomb'
 			]
 		];
+		return $templates;
+	}
+
+	/**
+	 * 
+	 */
+	public static function mailbombHtmlTemplate( $name, $content )
+	{
+		$html = "";
+
+		$templateName 		= $name;
+		$templateContent 	= $content;
+
+		ob_start();
+
+		require( 'templates/single-mailbomb-model-template.php' );
+
+		$html = ob_get_contents();
+
+		ob_end_clean();
+
+		return $html;
+	}
+
+
+	/**
+	 * MAILBOMB - Add default templates
+	 */
+	public static function mailbombAddTemplates()
+	{
+		global $wpdb;
+
+		$now  		= new Datetime();	
+
+		$tableName 	= $wpdb->prefix . 'mailbomb_templates';
+
+		$templates 	= self::mailbombArrayTemplatesContent();
 
 		foreach( $templates as $data )
 		{
-			$template_name 		= $data['name'];
-			$template_content 	= $data['content'];
+			$templateName 		= $data['name'];
+			$templateContent 	= $data['content'];
 
-			$check   =  $wpdb->get_row( "SELECT * FROM $table_name WHERE template_name='$template_name'", OBJECT );
+			$check   			=  $wpdb->get_row( "SELECT * FROM $tableName WHERE template_name='$templateName'", OBJECT );
 
 			if( !$check )
 			{
 				$dateNow    = $now->format('Y-m-d H:i:s');
 
-				ob_start();
-
-				require( 'templates/single-mailbomb-model-template.php' );
-
-				$content = ob_get_contents();
-
-				ob_end_clean();
+				$content = self::mailbombHtmlTemplate( $templateName, $templateContent );
 
 				$dataValues = [ 
-					'template_name' 	=> $template_name,
+					'template_name' 	=> $templateName,
 					'template_value' 	=> $content,
 					'is_active' 		=> '1',
 					'created_at' 		=> $dateNow
 				];
 
-				$wpdb->insert( $table_name, $dataValues, [ '%s', '%s', '%s', '%s' ] );
+				$wpdb->insert( $tableName, $dataValues, [ '%s', '%s', '%s', '%s' ] );
 			}
-
-			$template_name 		= null;
-			$template_content 	= null;
 		}
+		return;
 	}
 }

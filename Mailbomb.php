@@ -1,21 +1,13 @@
 <?php
 
 /*
-
-Plugin Name: Mail bomb
-
+Plugin Name: Mailbomb
 Plugin URI: http://github.com
-
 Description: Un plugin de newsletter
-
 Version: 0.1
-
 Author: ANTIOCO Benjamin
-
 Author URI: http://localhost.dom
-
 License: GPL2
-
 */
 
 

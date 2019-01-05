@@ -2,6 +2,8 @@ let modTemplate = {
 
     Init: ()=> {
 
+        modTemplate.DisabledCheckbox();
+
         modTemplate.FormTemplateFile();
 
         modTemplate.FormTemplateLoad();
@@ -9,14 +11,55 @@ let modTemplate = {
         modTemplate.FormAddTemplate();
     },
 
+    DisabledCheckbox: ()=> {
+
+        if( $('.mailbomb_templates_class_table').is(':visible') ){
+
+            let MailbombTemplate = [
+                'mailbomb-test',
+                'mailbomb-newsletter',
+                'mailbomb-register',
+                'mailbomb-unregistered'
+            ];
+
+            $('#the-list').find('tr').each( function( index, tr ){
+
+                let templateName = $(tr).find('.post_name').text();
+
+                if( templateName.length > 1 ){
+
+                    $(tr).attr( 'data-name', templateName );
+
+                    if( MailbombTemplate.indexOf( templateName ) != -1 ) {
+
+                        $(tr).find('input[name="post[]"]').prop('disabled', true).css('cursor', 'not-allowed'); 
+
+                        $(tr).find('.row-actions').children('.trash').remove();
+                    }
+                }
+            });
+
+            
+        }
+    },
+
     ReplaceImg: ()=> {
 
-        console.log( $('.mailbomb_img_replaced').is(':visible') );
+        let MailbombTemplate = [
+            'mailbomb-test',
+            'mailbomb-newsletter',
+            'mailbomb-register',
+            'mailbomb-unregistered'
+        ];
 
-        let loadContent = $('#mailbomb_template_view_box').find('.inside').html();
+        if( MailbombTemplate.indexOf( $('#post_name').val() ) === -1 ) {
 
-        $('input#mailbomb_content_template_field').val( loadContent.trim() );
+            $('#mailbomb_template_loader').show();
 
+            let loadContent = $('#mailbomb_template_view_box').find('.inside').html();
+
+            $('input#mailbomb_content_template_field').val( loadContent.trim() );
+        }
 
         if( !$('.mailbomb_img_replaced').is(':visible') ){
 
@@ -32,6 +75,8 @@ let modTemplate = {
 
                             if( result ){
 
+                                $('#mailbomb_template_loader').remove();
+
                                 let content = $('#mailbomb_template_view_box').find('.inside').html();
 
                                 $('input#mailbomb_content_template_field').val( content.trim() );
@@ -44,8 +89,10 @@ let modTemplate = {
             }
         }
         else{
-            return;
+            $('#mailbomb_template_loader').remove();
         }
+
+        return;
     },
 
     UpdateMailbombPost: ( PostId )=> {

@@ -4,25 +4,17 @@ body.mailbomb-unregistered_class,
 body.mailbomb-test_class
 {
     #edit-slug-box,
-    #publishing-action,
     .edit-post-status,
     .edit-visibility,
     .edit-timestamp,
-    .page-title-action
+    .page-title-action,
+    #major-publishing-actions
     {
         display: none;
         visibility: hidden;
         opacity: 0;
         width: 0;
         height: 0;
-    }
-
-    input#title[value="Mailbomb newsletter"],
-    input#title[value="Mailbomb register"],
-    input#title[value="Mailbomb unregistered"],
-    input#title[value="Mailbomb test"]
-    {
-        pointer-events:none;
     }
 
     #mailbomb_template_upload_box{
@@ -31,38 +23,6 @@ body.mailbomb-test_class
         opacity: 0;
         width: 0;
         height: 0;
-    }
-
-    #post-preview{
-        content: "";
-        visibility: hidden;
-    }
-
-    #post-preview:before{
-        content: "Prévisualiser";
-        visibility: visible;
-        color: #555;
-        border-color: #ccc;
-        background: #f7f7f7;
-        box-shadow: 0 1px 0 #ccc;
-        vertical-align: top;
-        text-align: center;
-
-        display: inline-block;
-        text-decoration: none;
-        font-size: 13px;
-        line-height: 26px;
-        height: 28px;
-        margin: 0;
-        padding: 0 10px 1px;
-        cursor: pointer;
-        border-width: 1px;
-        border-style: solid;
-        -webkit-appearance: none;
-        border-radius: 3px;
-        white-space: nowrap;
-        box-sizing: border-box;
-        float: right;
     }
 }
 
@@ -102,4 +62,88 @@ body.mailbomb_templates_class_edit{
             height: 0;
         }
     }
+
+    #edit-slug-buttons{
+        display: none;
+    }
+
+    input#title{
+        pointer-events:none;
+        border: 0px;
+        background-color: #f1f1f1 !important;
+        box-shadow: none !important;
+        font-size: 42px !important;
+    }
+
+    #post-preview{
+        content: "";
+        visibility: hidden;
+    }
+
+    #post-preview:before{
+        content: "Prévisualiser";
+        visibility: visible;
+        color: #555;
+        border-color: #ccc;
+        background: #f7f7f7;
+        box-shadow: 0 1px 0 #ccc;
+        vertical-align: top;
+        text-align: center;
+
+        display: inline-block;
+        text-decoration: none;
+        font-size: 13px;
+        line-height: 26px;
+        height: 28px;
+        margin: 0;
+        padding: 0 10px 1px;
+        cursor: pointer;
+        border-width: 1px;
+        border-style: solid;
+        -webkit-appearance: none;
+        border-radius: 3px;
+        white-space: nowrap;
+        box-sizing: border-box;
+        float: right;
+    }
+
+    #submitdiv{
+        .handlediv,
+        .hndle{
+            display:none;
+        }
+
+        #publish{
+            opacity: 0;
+            visibility: hidden;
+        }
+    }
+}
+
+
+.mailbomb_template_loader{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    background-color: #FFF;
+    padding-top: 30%;
+    text-align: center;
+    display: none;
+}
+
+
+.mailbomb_add_name_template{
+    width: 100%;
+    margin: 5px 0 0 0;
+    padding: 5px;
+}
+
+.mailbomb_add_html_template{
+    width: 100%;
+    min-height: 300px;
+    margin: 5px 0 0 0;
+    padding: 5px;
 }
