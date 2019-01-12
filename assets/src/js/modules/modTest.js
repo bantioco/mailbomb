@@ -128,7 +128,7 @@ let modTest = {
     TestAjaxPost: ( Email, Index, Template, callback )=> {
 
         $.post(
-            ajaxurl,
+            $ajaxUrl,
             {
                 action: 'mailbombTestSend',
                 mailbomb_test_email: Email, 

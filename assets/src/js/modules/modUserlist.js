@@ -134,7 +134,7 @@ let modUserlist = {
     UserListDeletePost: ( UserId, callback )=> {
 
         $.post(
-            ajaxurl,
+            $ajaxUrl,
             {
                 action: 'mailbombUserDelete',
                 mailbomb_user_id: UserId

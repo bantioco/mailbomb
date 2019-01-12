@@ -25,9 +25,9 @@ let modImport = {
 
             e.preventDefault();
 
-            
-
             modImport.UserImportParseFile( $(this)[0], function( result ){
+
+                console.log( result )
 
                 if( result ){
 
@@ -88,7 +88,7 @@ let modImport = {
     UserImportAddPost: ( email, callback )=> {
 
         $.post(
-            ajaxurl,
+            $ajaxUrl,
             {
                 action: 'mailbombUsersImportAdd',
                 mailbomb_user_email: email
@@ -107,7 +107,7 @@ let modImport = {
         formData.append('action', 'mailbobmUserListParseFile');
 
         $.ajax({
-            url : ajaxurl,
+            url : $ajaxUrl,
             type: "POST",
             data : formData,
             processData: false,

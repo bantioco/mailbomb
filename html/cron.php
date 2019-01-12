@@ -3,76 +3,24 @@
     <div>
         <div class="mailbomb_setting_title">Ajouter une nouvelle tache</div>
 
-        <div>mailbomb_cron_event</div>
-
-        <br>
-
         <form method="POST">
 
-            <div>
-                <div>
-                    <label for="maibomb_cron_day_all_day">
-                        <input id="maibomb_cron_day_all_day" name="mailbomb_cron_add_day[]" value="all" type="checkbox">Tous
-                    </label>
-                </div>
-                <br>
-                <div>
-                    <label for="maibomb_cron_day_monday">
-                        <input id="maibomb_cron_day_monday" name="mailbomb_cron_add_day[]" value="monday" type="checkbox">Lundi
-                    </label>
-                </div>
-                <div>
-                    <label for="maibomb_cron_day_thuesday">
-                        <input id="maibomb_cron_day_thuesday" name="mailbomb_cron_add_day[]" value="thuesday" type="checkbox">Mardi
-                    </label>
-                </div>
-                <div>
-                    <label for="maibomb_cron_day_wednesday">
-                        <input id="maibomb_cron_day_wednesday" name="mailbomb_cron_add_day[]" value="wednesday" type="checkbox">Mercredi
-                    </label>
-                </div>
-                <div>
-                    <label for="maibomb_cron_day_thursday">
-                        <input id="maibomb_cron_day_thursday" name="mailbomb_cron_add_day[]" value="thursday" type="checkbox">Jeudi
-                    </label>
-                </div>
-                <div>
-                    <label for="maibomb_cron_day_friday">
-                        <input id="maibomb_cron_day_friday" name="mailbomb_cron_add_day[]" value="friday" type="checkbox">Vendredi
-                    </label>
-                </div>
-                <div>
-                    <label for="maibomb_cron_day_saturday">
-                        <input id="maibomb_cron_day_saturday" name="mailbomb_cron_add_day[]" value="saturday" type="checkbox">Samedi
-                    </label>
-                </div>
-                <div>
-                    <label for="maibomb_cron_day_sunday">
-                        <input id="maibomb_cron_day_sunday" name="mailbomb_cron_add_day[]" value="sunday" type="checkbox">Dimanche</label>
-                </div>
-            </div>
+            <span class="mailbomb_large_span">mailbomb_cron_event</span>
 
-            <br>
+            <select name="mailbomb_cron_schedule" class="mailbomb_input_large">
 
-            <div>
-                <select name="mailbomb_cron_schedule">
+                <option value="mailbomb_schedule_single_event">No-repeating</option>
 
-                    <option value="mailbomb_schedule_single_event">No-repeating</option>
+                <?php if( $schedules && is_array( $schedules ) ): foreach( $schedules as $name => $schedule ): ?>
 
-                    <?php if( $schedules && is_array( $schedules ) ): foreach( $schedules as $name => $schedule ): ?>
+                    <option value="<?php echo $name;?>"><?php echo $schedule['display'];?></option>
 
-                        <option value="<?php echo $name;?>"><?php echo $schedule['display'];?></option>
+                <?php endforeach; endif; ?>
 
-                    <?php endforeach; endif; ?>
+            </select>
 
-                </select>
-            </div>
-
-            <br>
-            <div>
-                <input type="hidden" name="mailbomb_cron_post" value="1">
-                <button type="submit" name="submit" class="mailbomb-btn">VALIDER</button>
-            </div>
+            <input type="hidden" name="mailbomb_cron_post" value="1">
+            <input type="submit" name="submit" class="mailbomb-btn" value="Valider">
 
         </form>
         
@@ -274,8 +222,8 @@
                                     <?php if( $cron && is_array( $cron ) ): foreach( $cron as $i => $t): if( is_array( $t['args'] ) ): foreach( $t['args'] as $k => $a): echo $a; endforeach; endif; endforeach; endif;?>
                                 </td>
 
-                                <td class="mailbomb_cron_td"><?php if( $cron && is_array( $cron ) ): foreach( $cron as $i => $t): echo $t['interval'];endforeach; endif;?></td>
-                            <td class="mailbomb_cron_td"><?php if( $cron && is_array( $cron ) ): foreach( $cron as $i => $t): echo /*gmdate("H:i:s", $t['interval']);*/ self::sec2Time( $t['interval'] ); /*self::convertSeconds( $t['interval'] );*/ endforeach; endif;?></td>
+                                <td class="mailbomb_cron_td"><?php if( $cron && is_array( $cron ) ): foreach( $cron as $i => $t): if( isset( $t['interval'] ) ): echo $t['interval']; endif; endforeach; endif;?></td>
+                            <td class="mailbomb_cron_td"><?php if( $cron && is_array( $cron ) ): foreach( $cron as $i => $t): if( isset( $t['interval'] ) ): echo /*gmdate("H:i:s", $t['interval']);*/ self::sec2Time( $t['interval'] ); /*self::convertSeconds( $t['interval'] );*/ endif; endforeach; endif;?></td>
                                 <td class="mailbomb_cron_td"><?php if( $cron && is_array( $cron ) ): foreach( $cron as $i => $t): echo date( "d-M-Y H:i:s", $key ); endforeach; endif;?></td>
 
                                 <td class="mailbomb_cron_td mailbomb_cron_td_center">
@@ -311,7 +259,7 @@
     <br><br>
 
     <div>
-        <div class="mailbomb_setting_title">Plages horaires</div>
+        <div class="mailbomb_setting_title">Options de planification</div>
 
         <table class="mailbomb_cron_table">
             <thead>

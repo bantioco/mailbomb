@@ -93,7 +93,7 @@ let modDashboard = {
     NewsletterPost: ( userId, userEmail , callback )=> {
 
         $.post(
-            ajaxurl,
+            $ajaxUrl,
             {
                 action: 'mailbombNewsletterSend',
                 user_id: userId,
@@ -110,7 +110,7 @@ let modDashboard = {
     NewsletterPostGetUsers: ( callback )=> {
 
         $.post(
-            ajaxurl,
+            $ajaxUrl,
             {
                 action: 'mailbombNewsletterGetUsers',
                 users_get: '1'

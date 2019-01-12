@@ -44,6 +44,9 @@ class mailbombAjax
 
 		add_action( 'wp_ajax_mailbombUsersImportAdd', [ 'mailbombAjax', 'mailbombUsersImportAdd' ] );
 		add_action( 'wp_ajax_nopriv_mailbombUsersImportAdd', [ 'mailbombAjax', 'mailbombUsersImportAdd' ] );
+
+		add_action( 'wp_ajax_mailbombUsersExport', [ 'mailbombAjax', 'mailbombUsersExport' ] );
+		add_action( 'wp_ajax_nopriv_mailbombUsersExport', [ 'mailbombAjax', 'mailbombUsersExport' ] );
 	}
 
 	/**
@@ -58,32 +61,25 @@ class mailbombAjax
 			$userId 	= (int)$_POST['user_id'];
 			$userEmail 	= $_POST['user_email'];
 
-			global $wpdb;
-
-			$tableUsers 	= $wpdb->prefix.'mailbomb_users';
-			$tableParams 	= $wpdb->prefix.'mailbomb_params';
-
-			$userGet      	= $wpdb->get_row( "SELECT * FROM $tableUsers WHERE id = $userId", OBJECT );
+			$classUsers = new mailbombUsers();
+			$userGet 	= $classUsers->mailbombUserGet( '*', $userId );
 
 			$result = [ 'send' => 'error', 'email' => $userEmail, 'users' => $userGet ];
 
 			if( $userGet && ( $userGet->email === $userEmail ) )
 			{
-				$send 	= self::mailbombNewsletterWpMail( $wpdb, $tableParams, $userEmail );
+				global $wpdb;
 
-				$result = [ 'send' => 'error', 'email' => $userEmail, 'send_state' => $send ];
+				$tableParams 	= $wpdb->prefix.'mailbomb_params';
+				$send 			= self::mailbombNewsletterWpMail( $wpdb, $tableParams, $userEmail );
+				$result 		= [ 'send' => 'error', 'email' => $userEmail, 'send_state' => $send ];
+
+				$state 			= "error";
 
 				if( $send ) 
 				{
-					$result = self::mailbombNewsletterUpdateUser( $wpdb, $tableUsers, $userGet );
-
-					$state = "success";
-
-					//self::mailbombNewsletterStatsAdd( $wpdb, $userEmail, $state );
-				}
-				else
-				{
-					$state = "error";
+					$result = self::mailbombNewsletterUpdateUser( $userGet );
+					$state 	= "success";
 
 					//self::mailbombNewsletterStatsAdd( $wpdb, $userEmail, $state );
 				}
@@ -135,15 +131,14 @@ class mailbombAjax
 	/**
 	 * MAILBOMB - Newsletter update user data sending
 	 */
-	public function mailbombNewsletterUpdateUser( $wpdb, $tableUsers, $userGet )
+	public function mailbombNewsletterUpdateUser( $userGet )
 	{
 		$userId 				= $userGet->id;
 		$userEmail 				= $userGet->email;
 
 		$result 				= [ 'send' => 'success', 'update' => 'error_update', 'email' => $userEmail ];
 
-		$newsletterSending 		= $userGet->newsletter_sending;
-		$newNewsletterSending 	= ( (int)$newsletterSending + 1 );
+		$newNewsletterSending 	= ( (int)$userGet->newsletter_sending + 1 );
 
 		$now 		= new Datetime();
 		$dateNow 	= $now->format('Y-m-d H:i:s');
@@ -153,7 +148,12 @@ class mailbombAjax
 			'last_newsletter_sending'   => $dateNow
 		];
 
-		$update = $wpdb->update( $tableUsers, $datas, [ 'id' => $userId ], [ '%d', '%s' ], null );
+		$params = [ '%d', '%s' ];
+
+		$classUsers = new mailbombUsers();
+		$update 	= $classUsers->mailbombUserUpdate( $datas, $params, $userId );
+
+		//$update = $wpdb->update( $tableUsers, $datas, [ 'id' => $userId ], [ '%d', '%s' ], null );
 
 		if( $update === 1 ) $result = [ 'send' => 'success', 'update' => 'success', 'email' => $userEmail, 'update_user' => $update ];
 
@@ -169,10 +169,10 @@ class mailbombAjax
 
 		if( isset( $_POST['users_get'] )  )
 		{
-			global $wpdb;
 
-			$tableName  = $wpdb->prefix.'mailbomb_users';
-			$users      = $wpdb->get_results( "SELECT id, email FROM $tableName ", OBJECT );
+			$classUsers = new mailbombUsers();
+			$users 		= $classUsers->mailbombUsersGet( 'id, email' );
+
 
 			if( $users ) 
 			{
@@ -211,6 +211,32 @@ class mailbombAjax
 		$wpdb->insert( $tableStats, $datas, [ '%s', '%s', '%s', '%s' ] );
 
 		return;
+	}
+
+
+	public function mailbombUsersExport()
+	{
+		$result = [ 'response' => 'no_file_format' ];
+
+		if( isset( $_POST['mailbomb_export_user'] ) && isset( $_POST['file_format'] )  )
+		{
+
+			$fileFormat = ucfirst( strtolower( $_POST['file_format'] ) );
+
+			$dateStart 	= ( $_POST['date_start'] != '' ? $_POST['date_start'] : false );
+			$dateEnd 	= ( $_POST['date_end'] != '' ? $_POST['date_end'] : false );
+
+			$classUsers = new mailbombUsers();
+			$users 		= $classUsers->mailbombUsersGetByDate( '*', $dateStart, $dateEnd );
+
+			$classExcel = new mailbombExcel();
+
+			$fileXlsx = $classExcel->spreadsheetGenerateFile( $fileFormat, $users );
+
+			$result = [ 'response' => 'success', 'users' => $users, 'number' => count( $users), "file" => $fileXlsx ];
+		}
+
+		wp_send_json_success( $result );
 	}
 
 
@@ -292,56 +318,15 @@ class mailbombAjax
 
 		if( isset( $_POST['mailbomb_users_import'] )  )
 		{
-
 			if( $_FILES )
 			{
-				$csvfile = $_FILES['mailbomb_import_users'];
+				$classExcel = new mailbombExcel();
+				$datas 		= $classExcel->spreadsheetParseFile( $_FILES );
 
-				$csvFile = $csvfile['tmp_name'];
-				$csvType = $csvfile['type'];
-
-				$file_mimes = [
-					'text/x-comma-separated-values', 
-					'text/comma-separated-values', 
-					'application/octet-stream', 
-					'application/vnd.ms-excel', 
-					'application/x-csv', 
-					'text/x-csv', 
-					'text/csv', 
-					'application/csv', 
-					'application/excel', 
-					'application/vnd.msexcel', 
-					'text/plain', 
-					'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-				];
-
-				if( in_array( $csvType, $file_mimes ) )
-				{
-					$reader         = IOFactory::createReader('Csv');
-					$spreadsheet    = $reader->load($csvFile);
-
-					$sheetDatas = $spreadsheet->getActiveSheet()->toArray();
-
-					$emails = [];
-
-					if( $sheetDatas )
-					{
-						foreach( $sheetDatas as $key => $data )
-						{
-							if( $key != 0 && $data ) 
-							{
-								$index 			= $key-1;
-								$emails[$index] = $data[0];
-							}
-						}
-						$result = [ 'emails' => $emails ];
-					}
-				}
+				if( $datas ) $result = [ 'emails' => $datas ];
 			}
 		}
-
 		wp_send_json_success( $result );
-
 	}
 
 	public function mailbombTemplateReplaceImg() 

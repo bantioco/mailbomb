@@ -15,7 +15,80 @@
     </div>
     -->
 
-    <br><br>
+    <br>
+    <br>
+
+    <div>
+        <div class="mailbomb_setting_title">Statistique</div>
+
+        <div class="mailbomb_flex_container">
+
+            <div class="mailbomb_flex_col">
+
+                <div class="in_flex_col">
+
+                    <div class="mailbomb_active_widget_stat">
+                        <label for="mailbomb_active_widget_A"><input id="mailbomb_active_widget_A" type="checkbox"> Activer le widget sur le tableau de bord</label>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="mailbomb_flex_col">
+
+                <div class="in_flex_col">
+
+                    <div class="mailbomb_active_widget_stat">
+                        <label for="mailbomb_active_widget_B"><input id="mailbomb_active_widget_B" type="checkbox"> Activer le widget sur le tableau de bord</label>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="mailbomb_flex_col">
+
+                <div class="in_flex_col">
+
+                    <div class="mailbomb_active_widget_stat">
+                        <label for="mailbomb_active_widget_C"><input id="mailbomb_active_widget_C" type="checkbox"> Activer le widget sur le tableau de bord</label>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="mailbomb_flex_col">
+
+                <div class="in_flex_col">
+
+                    <div class="mailbomb_active_widget_stat">
+                        <label for="mailbomb_active_widget_B"><input id="mailbomb_active_widget_B" type="checkbox"> Activer le widget sur le tableau de bord</label>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="mailbomb_flex_col">
+
+                <div class="in_flex_col">
+
+                    <div class="mailbomb_active_widget_stat">
+                        <label for="mailbomb_active_widget_B"><input id="mailbomb_active_widget_B" type="checkbox"> Activer le widget sur le tableau de bord</label>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <br>
+    <br>
 
     <div>
         <div class="mailbomb_setting_title">Newsletter</div>

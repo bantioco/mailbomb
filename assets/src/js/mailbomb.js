@@ -6,6 +6,7 @@ jQuery(document).ready(function($) {
 
     window.$    = $;
     window.$d   = $(document);
+    window.$ajaxUrl = window.location.origin+'/wp-admin/admin-ajax.php'
 
 
     let modAdminmenu = require('./modules/modAdminmenu.js');
@@ -34,6 +35,7 @@ jQuery(document).ready(function($) {
         let modExport = require('./modules/modExport.js');
         modExport.Flatpickr( '#export_date_start' );
         modExport.Flatpickr( '#export_date_end' );
+        modExport.Export();
     }
 
     if( $('#mailbomb_template_view_box').is(':visible') ){

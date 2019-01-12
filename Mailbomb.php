@@ -27,9 +27,20 @@ register_deactivation_hook( __FILE__, [ 'MailbombInit', 'pluginDesactivation' ] 
 require_once( MAILBOMB__PLUGIN_DIR . 'class.mailbombInit.php' );
 add_action( 'init', [ 'mailbombInit', 'init' ] );
 
+require_once( MAILBOMB__PLUGIN_DIR . 'class.mailbombUsers.php' );
+add_action( 'init', [ 'mailbombUsers', 'init' ] );
+
+require_once( MAILBOMB__PLUGIN_DIR . 'class.mailbombHtml.php' );
+add_action( 'init', [ 'mailbombHtml', 'init' ] );
 
 require_once( MAILBOMB__PLUGIN_DIR . 'class.mailbombAdmin.php' );
 add_action( 'init', [ 'mailbombAdmin', 'init' ] );
+
+require_once( MAILBOMB__PLUGIN_DIR . 'class.mailbombCron.php' );
+add_action( 'init', [ 'mailbombCron', 'init' ] );
+
+require_once( MAILBOMB__PLUGIN_DIR . 'class.mailbombStats.php' );
+add_action( 'init', [ 'mailbombStats', 'init' ] );
 
 require_once( MAILBOMB__PLUGIN_DIR . 'class.mailbombMetabox.php' );
 add_action( 'init', [ 'mailbombMetabox', 'init' ] );
@@ -39,6 +50,9 @@ add_action( 'init', [ 'mailbombShortcode', 'init' ] );
 
 require_once( MAILBOMB__PLUGIN_DIR . 'class.mailbombTemplate.php' );
 add_action( 'init', [ 'mailbombTemplate', 'init' ] );
+
+require_once( MAILBOMB__PLUGIN_DIR . 'class.mailbombExcel.php' );
+add_action( 'init', [ 'mailbombExcel', 'init' ] );
 
 require_once( MAILBOMB__PLUGIN_DIR . 'class.mailbombAjax.php' );
 add_action( 'init', [ 'mailbombAjax', 'init' ] );

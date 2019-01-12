@@ -3,12 +3,12 @@
     <br>
 
     <div>
-        <form method="POST">
+        <form id="mailbomb_export_form" method="POST">
 
             <div class="mailbomb_setting_title">Choix du type de fichier</div>
 
             <div class="mailbomb-flex">
-                <div class="mailbom-item-flex"><label for="export_type_xlsx"><input type="radio" id="export_type_xlsx" name="export_type" value="xlsx"></label>XLSX</div>
+                <div class="mailbom-item-flex"><label for="export_type_xlsx"><input type="radio" id="export_type_xlsx" name="export_type" value="xlsx" checked></label>XLSX</div>
                 <div class="mailbom-item-flex"><label for="export_type_csv"><input type="radio" id="export_type_csv" name="export_type" value="csv">CSV</label></div>
             </div>
 

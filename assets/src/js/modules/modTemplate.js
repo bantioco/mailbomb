@@ -135,7 +135,7 @@ let modTemplate = {
     ReplaceImgPost: ( postid, callback )=> {
 
         $.post(
-            ajaxurl,
+            $ajaxUrl,
             {
                 action: 'mailbombTemplateReplaceImg',
                 mailbomb_post_id: postid,
